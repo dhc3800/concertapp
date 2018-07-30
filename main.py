@@ -29,7 +29,12 @@ class LogInHandler(webapp2.RequestHandler):
 
 
 class HomePageHandler(webapp2.RequestHandler):
+    def get(self):
+        template_vars ={
 
+        }
+        for event in events:
+            template_vars(event)
 
 # class MemeBrowser(webapp2.RequestHandler):
 #     def get(self):
