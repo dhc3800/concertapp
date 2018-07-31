@@ -5,7 +5,7 @@ class User(ndb.Model):
     last_name = ndb.StringProperty(required=True)
     email_address = ndb.StringProperty(required = True)
     id = ndb.StringProperty(required=True)
-
+    address = ndb.StringProperty(required=False)
 
 #One to One
 class Event(ndb.Model):

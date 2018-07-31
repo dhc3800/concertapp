@@ -20,14 +20,18 @@ jinja_current_directory = jinja2.Environment(
 
 class StartHandler(webapp2.RequestHandler):
     def get(self):
+        template=jinja_current_directory.get_template("templates/start.html")
+        self.response.write(template.render())
 
 
 class SignUpHandler(webapp2.RequestHandler):
-
+    def get(self):
+        template=jinja_current_directory.get_template("templates/signup.html")
+        self.response.write(template.render())
 
 class LogInHandler(webapp2.RequestHandler):
 
-
+    pass
 class HomePageHandler(webapp2.RequestHandler):
     def get(self):
         template_vars ={
@@ -35,7 +39,8 @@ class HomePageHandler(webapp2.RequestHandler):
         }
         for event in events:
             template_vars(event)
-
+    def post(self):
+        
 # class MemeBrowser(webapp2.RequestHandler):
 #     def get(self):
 #         memes = Meme.query().order(-Meme.created_at).fetch(10)
@@ -62,14 +67,11 @@ class HomePageHandler(webapp2.RequestHandler):
 #         self.redirect('/')
 #
 
-class LoadDataHandler(webapp2.RequestHandler):
-    def get(self):
-        seed_memes.seed_data()
+
 
 app = webapp2.WSGIApplication([
     ('/', StartHandler),
-    ('/login', LogInHandler)
-    ('signup', SignUpHandler)
-    ('/seed-data', LoadDataHandler),
-    ('/add_meme', AddMemeHandler),
+    ('/login', LogInHandler),
+    ('/signup', SignUpHandler),
+    ('/homepage', HomePageHandler)
 ], debug=True)
