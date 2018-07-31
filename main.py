@@ -4,14 +4,14 @@ import os
 import jinja2
 import random
 
-#import seed_memes
-
 from models import User, Event
 from google.appengine.api import users
 
 
 
-#remember, you can get this by searching for jinja2 google app engine
+
+
+
 jinja_current_directory = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
@@ -37,10 +37,23 @@ class HomePageHandler(webapp2.RequestHandler):
         template_vars ={
 
         }
-        for event in events:
-            template_vars(event)
+        self.response.write('hello')
+    #    for event in events:
+    #        template_vars(event)
     def post(self):
-        
+        pass
+
+class GroupPageHandler(webapp2.RequestHandler):
+    def post(self):
+        event_key = self.request.get('event_chosen')
+        UserEvents = UserEvent.query().filter(UserEvent.event_key == event_key)
+        UserList = []
+        for i in range(len(UserEvents)):
+            user_key = UserEvents[i].user_key
+            user = user_key.get()
+            UserList.append(user)
+
+
 # class MemeBrowser(webapp2.RequestHandler):
 #     def get(self):
 #         memes = Meme.query().order(-Meme.created_at).fetch(10)
