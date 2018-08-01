@@ -4,6 +4,8 @@ threadsafe: true
 
 handlers:
 
+- url: /css
+  static_dir: css
 - url: /static
   static_dir: static
 
@@ -13,6 +15,7 @@ handlers:
 # put this after all other handlers
 - url: /.*
   script: main.app
+  login: optional
 
 
 libraries:

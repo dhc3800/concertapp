@@ -3,45 +3,97 @@ import webapp2
 import os
 import jinja2
 import random
+import time
+
+
 
 from models import User, Event
 from google.appengine.api import users
+from google.appengine.ext import ndb
 
+event1 = Event(name = 'Pink', venue = 'LAX', description = 'Its a concert', artist = 'Pink', date = 'October 12, 2018', image = 'https:\/\/s1.ticketm.net\/dam\/a\/1dd\/d5e86d93-5e1a-49d9-b530-70fefc0f21dd_711081_ARTIST_PAGE_3_2.jpg')
+event2 = Event(name = 'Lebron', venue = 'Staples', description = 'Its a basketball game', artist = 'Lebronto', date = 'Novermber 15, 2019', image = 'https://cdn-s3.si.com/s3fs-public/2018/07/30/lebron-james-possible-second-return-to-cavaliers.jpg')
+event3 = Event(name = 'Band', venue = 'Nhhs', description = 'Its a shitty concert', artist = 'Jazz Band', date = 'September 16, 2018', image = 'https://thumbs.dreamstime.com/b/silhouette-rock-band-9219259.jpg')
+event4 = Event(name = 'Google', venue = 'Venice', description = 'CSSI', artist = 'Cssi Instructors', date = 'August 1, 2018', image = 'https://lh3.googleusercontent.com/Sz9NGQmEfK3l4UG-Iv4DRcJY8X38O2lMhxlfjM27nFZiK7MlvG_XLAFrAR3qSJzHT2DLZND56UB1R_KbOEazVpR9wEr9P6gCLtcWNtY=w1280')
 
+events = []
+events.append(event1)
+events.append(event2)
+events.append(event3)
+events.append(event4)
+current_events = Event.query().fetch()
+if current_events == []:
 
-
-
-
+    for i in range(len(events)):
+        events[i].put()
+# users = []
+# user1 = User(first_name = 'DH')
+# user2 = User(first_name = 'Daniel')
+# user3 = User(first_name = 'Nathan')
+# user4 = User(first_name = 'Sarah')
+# users.append(user1)
+# users.append(user2)
+# users.append(user3)
+# users.append(user4)
+# for i in range(len(users)):
+#     users[i].put()
 jinja_current_directory = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
+# class SignUpHandler(webapp2.RequestHandler):
+#     def get(self):
+#         template=jinja_current_directory.get_template("templates/signup.html")
+#         self.response.write(template.render())
 
 
-class StartHandler(webapp2.RequestHandler):
-    def get(self):
-        template=jinja_current_directory.get_template("templates/start.html")
-        self.response.write(template.render())
-
-
-class SignUpHandler(webapp2.RequestHandler):
-    def get(self):
-        template=jinja_current_directory.get_template("templates/signup.html")
-        self.response.write(template.render())
-
-class LogInHandler(webapp2.RequestHandler):
-
-    pass
 class HomePageHandler(webapp2.RequestHandler):
     def get(self):
-        template_vars ={
+        loggedin_user = users.get_current_user()
 
-        }
-        self.response.write('hello')
+        if loggedin_user:
+            current_users = User.query(User.id == loggedin_user.user_id()).fetch()
+            x = []
+            if current_users == x:
+                template = jinja_current_directory.get_template('templates/signup.html')
+                self.response.write(template.render())
+            else:
+                template = jinja_current_directory.get_template('templates/homepage.html')
+                self.response.write(template.render({'logout_link': users.create_logout_url('/')}))
+        else:
+            login_prompt_template = jinja_current_directory.get_template('templates/login.html')
+            self.response.write(login_prompt_template.render({'login_link': users.create_login_url('/')}))
+
+
+
+
     #    for event in events:
     #        template_vars(event)
+class MakeUser(webapp2.RequestHandler):
     def post(self):
-        pass
+        user = User(first_name = self.request.get('firstname'), id = users.get_current_user().user_id(), last_name = self.request.get('lastname'))
+        user.put()
+        time.sleep(.25)
+        self.redirect('/')
+
+class EventListHandler(webapp2.RequestHandler):
+    def get(self):
+        self.response.content_type = 'text/json'
+        events = Event.query().fetch()
+        events_list = []
+        for event in events:
+            events_list.append({
+                'name' : event.name,
+                'venue' : event.venue,
+                'description' : event.description,
+                'image': event.image,
+                'artist': event.artist,
+                'date': event.date,
+                'key': str(event.key.id()),
+
+            })
+        self.response.write(json.dumps(events_list))
+
 
 class GroupPageHandler(webapp2.RequestHandler):
     def post(self):
@@ -53,38 +105,26 @@ class GroupPageHandler(webapp2.RequestHandler):
             user = user_key.get()
             UserList.append(user)
 
-
-# class MemeBrowser(webapp2.RequestHandler):
-#     def get(self):
-#         memes = Meme.query().order(-Meme.created_at).fetch(10)
-#         for meme in memes:
-#             meme.template_filename = meme.template.get().image_file
-#         start_template=jinja_current_directory.get_template("templates/latestmemes.html")
-#         self.response.write(start_template.render({'memes': memes}))
-#
-# class AddMemeHandler(webapp2.RequestHandler):
-#     def get(self):
-#         templates = Template.query().fetch()
-#         add_template=jinja_current_directory.get_template("templates/new_meme.html")
-#         self.response.write(add_template.render({'templates': templates}))
-#
-#     def post(self):
-#         user = users.get_current_user()
-#         template_name = self.request.get('template')
-#         template_key = Template.query(Template.name == template_name).fetch(1)[0].key
-#         Meme(top_text=self.request.get('top_text'),
-#              bottom_text=self.request.get('bottom_text'),
-#              template=template_key,
-#              creator=user.email(),
-#              created_at=datetime.datetime.utcnow()).put()
-#         self.redirect('/')
-#
-
-
+class EmailListHandler(webapp2.RequestHandler):
+    def get(self):
+        event_key_id = self.request.get('event_key_id')
+        event_key = ndb.Key(Event, int(event_key_id) )
+        event_list = Event.query(Event.key == event_key).fetch()
+        event = event_list[0]
+        loggedin_user = users.get_current_user()
+        user_list = User.query(loggedin_user.user_id() == User.id).fetch()
+        user = user_list[0]
+        newUserEvent = {'user_key': user.key, 'event_key': event.key}
+        newUserEvent.put()
+        time.sleep(.25)
+        UserEvents = UserEvent.query(UserEvent.event_key == event_key).fetch()
+        
+        self.response.write(UserEvent)
 
 app = webapp2.WSGIApplication([
-    ('/', StartHandler),
-    ('/login', LogInHandler),
-    ('/signup', SignUpHandler),
-    ('/homepage', HomePageHandler)
+    ('/eventlist', EventListHandler),
+    ('/emaillist', EmailListHandler),
+    # ('/signup', SignUpHandler),
+    ('/', HomePageHandler),
+    ('/makeuser', MakeUser)
 ], debug=True)
