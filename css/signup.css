@@ -1,0 +1,11 @@
+body {
+  color: cornflowerblue;
+  font-weight: bold;
+  text-align: left;
+  font-size: 40px;
+  font-family: Arial;
+}
+
+input {
+  padding: 10px 50px;
+}
