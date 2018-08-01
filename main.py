@@ -7,7 +7,7 @@ import time
 
 
 
-from models import User, Event
+from models import User, Event, UserEvent
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
@@ -52,15 +52,18 @@ class HomePageHandler(webapp2.RequestHandler):
         loggedin_user = users.get_current_user()
 
         if loggedin_user:
-            current_users = User.query(User.id == loggedin_user.user_id()).fetch()
-            x = []
-            if current_users == x:
+            print('logged in with: ' + loggedin_user.user_id())
+            current_user = User.query(User.id == loggedin_user.user_id()).get()
+            if current_user == None:
+                print('user does not exist')
                 template = jinja_current_directory.get_template('templates/signup.html')
                 self.response.write(template.render())
             else:
+                print('user does exist')
                 template = jinja_current_directory.get_template('templates/homepage.html')
                 self.response.write(template.render({'logout_link': users.create_logout_url('/')}))
         else:
+            print('not logged in')
             login_prompt_template = jinja_current_directory.get_template('templates/login.html')
             self.response.write(login_prompt_template.render({'login_link': users.create_login_url('/')}))
 
@@ -71,7 +74,11 @@ class HomePageHandler(webapp2.RequestHandler):
     #        template_vars(event)
 class MakeUser(webapp2.RequestHandler):
     def post(self):
-        user = User(first_name = self.request.get('firstname'), id = users.get_current_user().user_id(), last_name = self.request.get('lastname'))
+        user = User(first_name = self.request.get('firstname'),
+        id = users.get_current_user().user_id(),
+        last_name = self.request.get('lastname'),
+        email = users.get_current_user().email(),
+        city = self.request.get('city'))
         user.put()
         time.sleep(.25)
         self.redirect('/')
@@ -109,22 +116,32 @@ class EmailListHandler(webapp2.RequestHandler):
     def get(self):
         event_key_id = self.request.get('event_key_id')
         event_key = ndb.Key(Event, int(event_key_id) )
-        event_list = Event.query(Event.key == event_key).fetch()
-        event = event_list[0]
+        event = Event.query(Event.key == event_key).get()
         loggedin_user = users.get_current_user()
-        user_list = User.query(loggedin_user.user_id() == User.id).fetch()
-        user = user_list[0]
-        newUserEvent = {'user_key': user.key, 'event_key': event.key}
-        newUserEvent.put()
-        time.sleep(.25)
+        user = User.query(loggedin_user.user_id() == User.id).get()
+        newUserEvent = UserEvent(user_key= user.key, event_key= event.key)
+        currentUserEvent = UserEvent.query(ndb.AND((UserEvent.user_key==user.key),(UserEvent.event_key==event.key))).get()
+        if currentUserEvent == None:
+            newUserEvent.put()
+            time.sleep(.25)
         UserEvents = UserEvent.query(UserEvent.event_key == event_key).fetch()
-        
-        self.response.write(UserEvent)
+        Users = []
+        for userevent in UserEvents:
+            user = userevent.user_key.get()
+            Users.append(user)
+        Users.sort()
+        template = jinja_current_directory.get_template('templates/emaillist.html')
+        self.response.write(template.render(Users=Users, event = event))
+
+
+
+
+
+
 
 app = webapp2.WSGIApplication([
     ('/eventlist', EventListHandler),
     ('/emaillist', EmailListHandler),
-    # ('/signup', SignUpHandler),
     ('/', HomePageHandler),
     ('/makeuser', MakeUser)
 ], debug=True)

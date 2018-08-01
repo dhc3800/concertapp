@@ -3,8 +3,9 @@ from google.appengine.ext import ndb
 class User(ndb.Model):
     first_name =  ndb.StringProperty(required=True)
     last_name = ndb.StringProperty(required=True)
-    #email_address = ndb.StringProperty(required = True)
+    email = ndb.StringProperty(required = True)
     id = ndb.StringProperty(required=True)
+    city = ndb.StringProperty(required=True)
     #gender = ndb.StringProperty(required=False)
 
     # address = ndb.StringProperty(required=False)

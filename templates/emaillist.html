@@ -1,0 +1,19 @@
+<head>
+  <title> EmailList </title>
+  <link rel ='stylesheet' href='css/emaillist.css'
+</head>
+<body>
+  <table id='emaillist' style='width: 100%'>
+    <tr>
+      <th> Name: </th>
+      <th> City: </th>
+      <th> Email: </th>
+    </tr>
+    {% for User in Users %}
+      <tr>
+        <td style='text-align: center; vertical-align: middle;'>{{User.last_name + ', ' + User.first_name}}</td>
+        <td style='text-align: center; vertical-align: middle;'>{{User.city}}</td>
+        <td style='text-align: center; vertical-align: middle;'>{{User.email}}</td>
+      </tr>
+    {% endfor %}
+  </table>
