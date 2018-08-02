@@ -4,48 +4,20 @@ import os
 import jinja2
 import random
 import time
-
+import urllib
 
 
 from models import User, Event, UserEvent
 from google.appengine.api import users
 from google.appengine.ext import ndb
+from google.appengine.api import urlfetch
 
-event1 = Event(name = 'Pink', venue = 'LAX', description = 'Its a concert', artist = 'Pink', date = 'October 12, 2018', image = 'https:\/\/s1.ticketm.net\/dam\/a\/1dd\/d5e86d93-5e1a-49d9-b530-70fefc0f21dd_711081_ARTIST_PAGE_3_2.jpg')
-event2 = Event(name = 'Lebron', venue = 'Staples', description = 'Its a basketball game', artist = 'Lebronto', date = 'Novermber 15, 2019', image = 'https://cdn-s3.si.com/s3fs-public/2018/07/30/lebron-james-possible-second-return-to-cavaliers.jpg')
-event3 = Event(name = 'Band', venue = 'Nhhs', description = 'Its a shitty concert', artist = 'Jazz Band', date = 'September 16, 2018', image = 'https://thumbs.dreamstime.com/b/silhouette-rock-band-9219259.jpg')
-event4 = Event(name = 'Google', venue = 'Venice', description = 'CSSI', artist = 'Cssi Instructors', date = 'August 1, 2018', image = 'https://lh3.googleusercontent.com/Sz9NGQmEfK3l4UG-Iv4DRcJY8X38O2lMhxlfjM27nFZiK7MlvG_XLAFrAR3qSJzHT2DLZND56UB1R_KbOEazVpR9wEr9P6gCLtcWNtY=w1280')
 
-events = []
-events.append(event1)
-events.append(event2)
-events.append(event3)
-events.append(event4)
-current_events = Event.query().fetch()
-if current_events == []:
 
-    for i in range(len(events)):
-        events[i].put()
-# users = []
-# user1 = User(first_name = 'DH')
-# user2 = User(first_name = 'Daniel')
-# user3 = User(first_name = 'Nathan')
-# user4 = User(first_name = 'Sarah')
-# users.append(user1)
-# users.append(user2)
-# users.append(user3)
-# users.append(user4)
-# for i in range(len(users)):
-#     users[i].put()
 jinja_current_directory = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
-# class SignUpHandler(webapp2.RequestHandler):
-#     def get(self):
-#         template=jinja_current_directory.get_template("templates/signup.html")
-#         self.response.write(template.render())
-
 
 class HomePageHandler(webapp2.RequestHandler):
     def get(self):
@@ -60,6 +32,25 @@ class HomePageHandler(webapp2.RequestHandler):
                 self.response.write(template.render())
             else:
                 print('user does exist')
+                url = 'https://app.ticketmaster.com/discovery/v2/events.json?classificationName=music&dmaId=324&apikey=zjreZ4GpbxN2WwZfOOKPooZF2FkTrZKe'
+                fetch_result = urlfetch.fetch(url)
+                fetch_content = json.loads(fetch_result.content)
+                api_event_list = fetch_content['_embedded']['events']
+
+                for api_event in api_event_list:
+                    event = Event(name=api_event['name'], venue=api_event['_embedded']['venues'][0]['name'],
+                    date= api_event['dates']['start']['localDate'], description=api_event['url'],
+                    image=api_event['_embedded']['attractions'][0]['images'][0]['url'])
+                    event_exists = Event.query(Event.description == api_event['url']).get()
+                    if event_exists:
+                        pass
+                    else:
+                        event.put()
+
+
+
+
+
                 template = jinja_current_directory.get_template('templates/homepage.html')
                 self.response.write(template.render({'logout_link': users.create_logout_url('/')}))
         else:
@@ -68,10 +59,6 @@ class HomePageHandler(webapp2.RequestHandler):
             self.response.write(login_prompt_template.render({'login_link': users.create_login_url('/')}))
 
 
-
-
-    #    for event in events:
-    #        template_vars(event)
 class MakeUser(webapp2.RequestHandler):
     def post(self):
         user = User(first_name = self.request.get('firstname'),
@@ -82,6 +69,7 @@ class MakeUser(webapp2.RequestHandler):
         user.put()
         time.sleep(.25)
         self.redirect('/')
+
 
 class EventListHandler(webapp2.RequestHandler):
     def get(self):
@@ -94,7 +82,7 @@ class EventListHandler(webapp2.RequestHandler):
                 'venue' : event.venue,
                 'description' : event.description,
                 'image': event.image,
-                'artist': event.artist,
+                #'artist': event.artist,
                 'date': event.date,
                 'key': str(event.key.id()),
 
@@ -111,6 +99,7 @@ class GroupPageHandler(webapp2.RequestHandler):
             user_key = UserEvents[i].user_key
             user = user_key.get()
             UserList.append(user)
+
 
 class EmailListHandler(webapp2.RequestHandler):
     def get(self):

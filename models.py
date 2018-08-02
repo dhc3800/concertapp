@@ -15,7 +15,7 @@ class Event(ndb.Model):
 
     name = ndb.StringProperty(required=True)
     venue = ndb.StringProperty(required=True)
-    artist = ndb.StringProperty(required=True)
+    #artist = ndb.StringProperty(required=True)
     date = ndb.StringProperty(required=True)
     # time_start = ndb.DateTimeProperty(required=True)
     # time_end = ndb.DateTimeProperty(required=True)
