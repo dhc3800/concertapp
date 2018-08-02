@@ -6,10 +6,22 @@
   </head>
   <body>
     <a href= "{{logout_link}}"> LogOut </a>
-    <div id = 'displayevents' >
+    <div id = 'displayevents' class="container">
+      <div class='container'>
+    	<!--<img src = '{{['image']}}'> -->
+    	<div class= 'card container'>
+    		<div class='container'>
+    			 <!--<h5 class='tm-text-blue'>{{['artist']}}</h5>
+    			<p class = 'mb-0'>{{['description']}} </p>
+    		</div> -->
+    		<div class = 'container'>
+    			<a href= '/emaillist?event_key_id=93104810294' class = 'tm-bg-blue tm-text-white tm-buy'>Attending</a>
+    			<span class = 'tm-text-blue tm-price-tag'> Oct 12, 2018</span>
+    		</div>
+    	</div>
+    </div>
 
-      <!-- {% for event in events %}
-      {% endfor %} -->
+
     </div>
     <script src = '/scripts/showevents.js'> </script>
   </body>

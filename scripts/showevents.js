@@ -11,14 +11,14 @@ function new_element(tag_name, attributes, children=[]){
 
 function insert_events(desc){
 
-  let new_div = new_element('div', {'class': 'event'}, [
+  let new_div = new_element('div', {'class': 'container'}, [
     new_element('img', {'src': desc['image']}),
 
-    new_element('div', {'class': 'event-body tm-bg-gray'},
-    [new_element('div', {'class': 'tm-description-box'},
+    new_element('div', {'class': 'container'},
+    [new_element('div', {'class': 'container'},
     [new_element('h5', {'class': 'tm-text-blue'}, [document.createTextNode(desc['artist'])]),
     new_element('p', {'class': 'mb-0'}, [document.createTextNode(desc['description'])])]),
-    new_element('div', {'class':'tm-buy-box'},
+    new_element('div', {'class':'card container'},
     [new_element('a', {'href':'/emaillist?event_key_id=' + desc['key'], 'class': 'tm-bg-blue tm-text-white tm-buy'},[document.createTextNode('Attending')]),
     new_element('span', {'class': 'tm-text-blue tm-price-tag'}, [document.createTextNode(desc['date'])])])
   ])
