@@ -14,10 +14,10 @@ function insert_events(desc){
   let new_div = new_element('div', {'class': 'container parent'}, [
     new_element('img', {'src': desc['image']}),
 
-    new_element('div', {'class': 'container parent'},
+    new_element('div', {'class': 'container parent b'},
     [new_element('div', {'class': 'container parent a'},
     [new_element('h2', {'class': 'tm-text-blue text'}, [document.createTextNode(desc['name'])]),
-     new_element('h5', {'class': 'description'}, [document.createTextNode('Performing at ' + desc['venue'] + ' on ' + desc['date'])])
+     new_element('h5', {'class': 'description'}, [document.createTextNode('Performing @ ' + desc['venue'] + ' on ' + desc['date'])])
   ]),
     new_element('div', {'class':'card container xd'},
     [new_element('a', {'href':'/emaillist?event_key_id=' + desc['key'], 'class': 'tm-bg-blue tm-text-white attend'},[document.createTextNode('Attending')]),

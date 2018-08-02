@@ -7,12 +7,51 @@ h5{
   text-align: center;
   font-family: Helvetica;
 
+}
+h4 {
+  color:white;
+}
 
+li{
+  display:inline;
+  float:left;
 
 }
 
-h4{
+a {
+  display:block;
+}
+ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+li h4{
+  padding-left: 420px;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+background-color: #111;
+}
+
+h2{
   text-align:center;
+
 
 }
 div {
@@ -22,12 +61,12 @@ div {
 }
 body {
   /* background-image: url('https://i.pinimg.com/originals/3d/5c/83/3d5c8355a120474d81d17a7193f9723a.jpg'); */
-
-  background-image: linear-gradient(red,yellow, blue, violet);
-  /* background-repeat: no-repeat;
+  background-image:url('https://images.unsplash.com/photo-1524169358666-79f22534bc6e?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=5adde3953c33ac273a33a2a990aa7e80&w=1000&q=80');
+  /* background-image: linear-gradient(red,yellow, blue, violet); */
+  background-repeat: no-repeat;
   background-attachment:fixed;
   background-position: center;
-  background-size: cover; */
+  background-size: cover;
 
   /* background-blend-mode: lighten; */
 }
@@ -46,11 +85,23 @@ body {
 .parent{
   display:flex;
   width: 100%;
+
 }
 .a{
-  width:60%;
-  height:90%;
+  width:70%;
+  height:196px;
   flex-direction: column;
+  margin-top:0px;
+  margin-bottom:0px;
+  background-color: white;
+  opacity:0.5;
+
+
+}
+.b {
+  margin-top:0px;
+  margin-bottom:0px;
+
 }
 .child{
   width:40%;
@@ -102,6 +153,7 @@ a{
 
 .xd {
   height: 50%;
+  margin-top:0px;
 }
 /* .event_header{
     height: 2.2rem;

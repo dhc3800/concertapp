@@ -10,7 +10,7 @@ class User(ndb.Model):
 
     # address = ndb.StringProperty(required=False)
 
-#One to One
+
 class Event(ndb.Model):
 
     name = ndb.StringProperty(required=True)
