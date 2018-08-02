@@ -20,6 +20,9 @@ li {
   float: left;
 }
 
+li h4{
+  padding-left: 420px;
+}
 li a {
   display: block;
   color: white;
@@ -28,7 +31,7 @@ li a {
   text-decoration: none;
 }
 li h4{
-  padding-left: 360px;
+  color:white;
 }
 
 /* Change the link color to #111 (black) on hover */

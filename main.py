@@ -141,7 +141,7 @@ class About(webapp2.RequestHandler):
     def get(self):
 
         template = jinja_current_directory.get_template('templates/aboutus.html')
-        self.response.write(template.render())
+        self.response.write(template.render({'logout_link': users.create_logout_url('/')}))
 
 
 
